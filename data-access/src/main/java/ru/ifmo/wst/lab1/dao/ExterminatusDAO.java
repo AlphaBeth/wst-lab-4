@@ -115,6 +115,25 @@ public class ExterminatusDAO {
         }
     }
 
+    public int update(long id, String initiator, String reason, String method, String planet, Date date) throws SQLException {
+        log.debug("Update entity with id {} and new values {} {} {} {} {}", id, initiator, reason, method, planet, date);
+        try (Connection conn = dataSource.getConnection()) {
+            conn.setAutoCommit(true);
+            String updateStr = "UPDATE exterminatus SET initiator = ?, reason = ?, method = ?, planet = ?, date = ? WHERE id = ?";
+            try (PreparedStatement stmnt = conn.prepareStatement(updateStr)) {
+                stmnt.setString(1, initiator);
+                stmnt.setString(2, reason);
+                stmnt.setString(3, method);
+                stmnt.setString(4, planet);
+                stmnt.setDate(5, new java.sql.Date(date.getTime()));
+                stmnt.setLong(6, id);
+                int updated = stmnt.executeUpdate();
+                log.debug("{} rows updated", updated);
+                return updated;
+            }
+        }
+    }
+
     private List<ExterminatusEntity> rsToEntities(ResultSet rs) throws SQLException {
         List<ExterminatusEntity> result = new ArrayList<>();
         while (rs.next()) {
