@@ -76,7 +76,7 @@ public class CommandInterpreter {
     private String nextLine() {
         String line = lineProducer.get();
         if (line == null) {
-            throw new RuntimeException("No line found");
+            throw new NoLineFoundException();
         }
         return line;
     }

@@ -4,6 +4,7 @@ import lombok.SneakyThrows;
 import ru.ifmo.wst.lab1.command.Command;
 import ru.ifmo.wst.lab1.command.CommandArg;
 import ru.ifmo.wst.lab1.command.CommandInterpreter;
+import ru.ifmo.wst.lab1.command.NoLineFoundException;
 import ru.ifmo.wst.lab1.command.args.DateArg;
 import ru.ifmo.wst.lab1.command.args.EmptyStringToNull;
 import ru.ifmo.wst.lab1.command.args.LongArg;
@@ -38,6 +39,9 @@ public class ConsoleClient {
         endpointUrl = "http://localhost:8080/deployment-jaxws-1.0/ExterminatusServiceService";
         System.out.print("Enter endpoint url (or empty string for default " + endpointUrl + ")\n> ");
         String line = bufferedReader.readLine();
+        if (line == null) {
+            return;
+        }
         if (!line.trim().isEmpty()) {
             endpointUrl = line.trim();
         }
@@ -101,7 +105,12 @@ public class ConsoleClient {
         commandInterpreter.info();
 
         while (true) {
-            Pair<Command, Object> withArg = commandInterpreter.readCommand();
+            Pair<Command, Object> withArg;
+            try {
+                withArg = commandInterpreter.readCommand();
+            } catch (NoLineFoundException exc) {
+                return;
+            }
             if (withArg == null) {
                 continue;
             }
