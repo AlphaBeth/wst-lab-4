@@ -19,6 +19,7 @@ import java.util.Properties;
 @Slf4j
 public class App {
     public static void main(String[] args) throws Exception {
+        log.info("Start application");
         Configuration conf = new Configuration("config.properties");
         String scheme = conf.get("scheme", "http:");
         String host = conf.get("host", "localhost");
@@ -36,9 +37,11 @@ public class App {
         DataSource dataSource = initDataSource();
 
         SampleDAO sampleDAO = new SampleDAO(dataSource);
-        log.info("Start application");
+        log.info("Publish test service onto {}", testServiceUrl);
         Endpoint publish = Endpoint.publish(testServiceUrl, new TestService());
+        log.info("Publish test dao service onto {}", daoServiceUrl);
         Endpoint.publish(daoServiceUrl, new TestDAOService(sampleDAO));
+        log.info("Publish exterminatus service onto {}", exterminatusUrl);
         Endpoint.publish(exterminatusUrl, new ExterminatusService(new ExterminatusDAO(dataSource)));
         log.info("Application was successfully started");
     }
