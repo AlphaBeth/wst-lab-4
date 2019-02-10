@@ -25,6 +25,12 @@ CREATE TABLE exterminatus
 );
 ```
 
+Sequence for id generation.
+
+```sql
+CREATE SEQUENCE exterminatus_sequence;
+```
+
 ## Artifacts
 
 Single artifact will be produced - module jar.

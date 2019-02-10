@@ -2,11 +2,11 @@ package ru.ifmo.wst.lab1.dao;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ru.ifmo.wst.lab1.model.ExterminatusEntity;
 import ru.ifmo.wst.lab1.db.DefaultCondition;
 import ru.ifmo.wst.lab1.db.IgnoreCaseContainsCondition;
 import ru.ifmo.wst.lab1.db.Query;
 import ru.ifmo.wst.lab1.db.QueryBuilder;
+import ru.ifmo.wst.lab1.model.ExterminatusEntity;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -69,6 +69,39 @@ public class ExterminatusDAO {
             return rsToEntities(rs);
         }
 
+    }
+
+    public long create(String initiator, String reason, String method, String planet, Date date) throws SQLException {
+        log.debug("Create with args {} {} {} {} {}", initiator, reason, method, planet, date);
+        try (Connection connection = dataSource.getConnection()) {
+            connection.setAutoCommit(false);
+            long newId;
+            try (Statement idStatement = connection.createStatement()) {
+                idStatement.execute("SELECT nextval('exterminatus_sequence') nextval");
+                try (ResultSet rs = idStatement.getResultSet()) {
+                    rs.next();
+                    newId = rs.getLong("nextval");
+                }
+
+            }
+            try (PreparedStatement stmnt = connection.prepareStatement(
+                    "INSERT INTO exterminatus(id, initiator, reason, method, planet, date) " +
+                            "VALUES (?, ?, ?, ?, ?, ?)")) {
+                stmnt.setLong(1, newId);
+                stmnt.setString(2, initiator);
+                stmnt.setString(3, reason);
+                stmnt.setString(4, method);
+                stmnt.setString(5, planet);
+                stmnt.setDate(6, new java.sql.Date(date.getTime()));
+                int count = stmnt.executeUpdate();
+                if (count == 0) {
+                    throw new RuntimeException("Could not execute query");
+                }
+            }
+            connection.commit();
+            connection.setAutoCommit(true);
+            return newId;
+        }
     }
 
     private List<ExterminatusEntity> rsToEntities(ResultSet rs) throws SQLException {
