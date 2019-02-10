@@ -3,11 +3,11 @@ package ru.ifmo.wst.lab1;
 import lombok.SneakyThrows;
 import ru.ifmo.wst.lab1.command.Command;
 import ru.ifmo.wst.lab1.command.CommandArg;
+import ru.ifmo.wst.lab1.command.CommandInterpreter;
 import ru.ifmo.wst.lab1.command.args.DateArg;
 import ru.ifmo.wst.lab1.command.args.EmptyStringToNull;
 import ru.ifmo.wst.lab1.command.args.LongArg;
 import ru.ifmo.wst.lab1.command.args.StringArg;
-import ru.ifmo.wst.lab1.command.CommandInterpreter;
 import ru.ifmo.wst.lab1.ws.client.Create;
 import ru.ifmo.wst.lab1.ws.client.ExterminatusEntity;
 import ru.ifmo.wst.lab1.ws.client.ExterminatusService;
@@ -71,8 +71,17 @@ public class ConsoleClient {
                 ), Create::new);
         Command<Void> exitCommand = new Command<>("exit", "Exit application");
 
+        Command<Box<Long>> deleteCommand = new Command<>("delete", "Delete exterminatus by id",
+                asList(
+                        new LongArg<>("id", "Exterminatus id", Box::setValue)
+                ), Box::new);
+
         CommandInterpreter commandInterpreter = new CommandInterpreter(() -> readLine(bufferedReader),
-                System.out::print, asList(infoCommand, changeEndpointAddressCommand, createCommand, findAllCommand, filterCommand, exitCommand),
+                System.out::print,
+                asList(
+                        infoCommand, changeEndpointAddressCommand, createCommand, findAllCommand, filterCommand,
+                        deleteCommand, exitCommand
+                ),
                 "No command found",
                 "Enter command", "> ");
 
@@ -107,7 +116,12 @@ public class ConsoleClient {
                 Create createArg = (Create) withArg.getRight();
                 long createdId = service.create(createArg.getInitiator(), createArg.getReason(), createArg.getMethod(), createArg.getPlanet(),
                         createArg.getDate());
-                System.out.printf("Entity with id %d was created", createdId);
+                System.out.printf("Entity with id %d was created\n", createdId);
+            } else if (command.equals(deleteCommand)) {
+                @SuppressWarnings("unchecked")
+                Box<Long> argRight = (Box<Long>) withArg.getRight();
+                int deletedCount = service.delete(argRight.getValue());
+                System.out.printf("%d were deleted by id %d\n", deletedCount, argRight.getValue());
             }
         }
     }
