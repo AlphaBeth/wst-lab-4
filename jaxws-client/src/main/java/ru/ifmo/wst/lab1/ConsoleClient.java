@@ -11,6 +11,7 @@ import ru.ifmo.wst.lab1.command.args.StringArg;
 import ru.ifmo.wst.lab1.ws.client.Create;
 import ru.ifmo.wst.lab1.ws.client.ExterminatusEntity;
 import ru.ifmo.wst.lab1.ws.client.ExterminatusService;
+import ru.ifmo.wst.lab1.ws.client.ExterminatusServiceException;
 import ru.ifmo.wst.lab1.ws.client.ExterminatusServiceService;
 import ru.ifmo.wst.lab1.ws.client.Filter;
 import ru.ifmo.wst.lab1.ws.client.Update;
@@ -105,41 +106,50 @@ public class ConsoleClient {
                 continue;
             }
             Command command = withArg.getLeft();
-            if (command.equals(findAllCommand)) {
-                List<ExterminatusEntity> all = service.findAll();
-                System.out.println("Result of operation:");
-                all.forEach(ee -> System.out.println(exterminatusToString(ee)));
-            } else if (command.equals(filterCommand)) {
-                Filter filterArg = (Filter) withArg.getRight();
-                List<ExterminatusEntity> filterRes = service.filter(filterArg.getId(), filterArg.getInitiator(), filterArg.getReason(), filterArg.getMethod(),
-                        filterArg.getPlanet(), filterArg.getDate());
-                System.out.println("Result of operation:");
-                filterRes.forEach(ee -> System.out.println(exterminatusToString(ee)));
-            } else if (command.equals(infoCommand)) {
-                commandInterpreter.info();
-            } else if (command.equals(exitCommand)) {
-                break;
-            } else if (command.equals(changeEndpointAddressCommand)) {
-                @SuppressWarnings("unchecked")
-                Box<String> arg = (Box<String>) withArg.getRight();
-                String newUrl = arg.getValue();
-                bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, newUrl);
-            } else if (command.equals(createCommand)) {
-                Create createArg = (Create) withArg.getRight();
-                long createdId = service.create(createArg.getInitiator(), createArg.getReason(), createArg.getMethod(), createArg.getPlanet(),
-                        createArg.getDate());
-                System.out.printf("Entity with id %d was created\n", createdId);
-            } else if (command.equals(deleteCommand)) {
-                @SuppressWarnings("unchecked")
-                Box<Long> argRight = (Box<Long>) withArg.getRight();
-                int deletedCount = service.delete(argRight.getValue());
-                System.out.printf("%d were deleted by id %d\n", deletedCount, argRight.getValue());
-            } else if (command.equals(updateCommand)) {
-                Update updateArg = (Update) withArg.getRight();
-                int updateCount = service.update(updateArg.getId(), updateArg.getInitiator(), updateArg.getReason(), updateArg.getMethod(),
-                        updateArg.getPlanet(), updateArg.getDate());
-                System.out.printf("%d rows were updated by id %d\n", updateCount, updateArg.getId());
+            try {
+                if (command.equals(findAllCommand)) {
+                    List<ExterminatusEntity> all = service.findAll();
+                    System.out.println("Result of operation:");
+                    all.forEach(ee -> System.out.println(exterminatusToString(ee)));
+                } else if (command.equals(filterCommand)) {
+                    Filter filterArg = (Filter) withArg.getRight();
+                    List<ExterminatusEntity> filterRes = service.filter(filterArg.getId(), filterArg.getInitiator(), filterArg.getReason(), filterArg.getMethod(),
+                            filterArg.getPlanet(), filterArg.getDate());
+                    System.out.println("Result of operation:");
+                    filterRes.forEach(ee -> System.out.println(exterminatusToString(ee)));
+                } else if (command.equals(infoCommand)) {
+                    commandInterpreter.info();
+                } else if (command.equals(exitCommand)) {
+                    break;
+                } else if (command.equals(changeEndpointAddressCommand)) {
+                    @SuppressWarnings("unchecked")
+                    Box<String> arg = (Box<String>) withArg.getRight();
+                    String newUrl = arg.getValue();
+                    bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, newUrl);
+                } else if (command.equals(createCommand)) {
+                    Create createArg = (Create) withArg.getRight();
+                    long createdId = service.create(createArg.getInitiator(), createArg.getReason(), createArg.getMethod(), createArg.getPlanet(),
+                            createArg.getDate());
+                    System.out.printf("Entity with id %d was created\n", createdId);
+                } else if (command.equals(deleteCommand)) {
+                    @SuppressWarnings("unchecked")
+                    Box<Long> argRight = (Box<Long>) withArg.getRight();
+                    int deletedCount = service.delete(argRight.getValue());
+                    System.out.printf("%d were deleted by id %d\n", deletedCount, argRight.getValue());
+                } else if (command.equals(updateCommand)) {
+                    Update updateArg = (Update) withArg.getRight();
+                    int updateCount = service.update(updateArg.getId(), updateArg.getInitiator(), updateArg.getReason(), updateArg.getMethod(),
+                            updateArg.getPlanet(), updateArg.getDate());
+                    System.out.printf("%d rows were updated by id %d\n", updateCount, updateArg.getId());
+                }
+            } catch (ExterminatusServiceException exc) {
+                System.out.println("Error in service:");
+                System.out.println(exc.getFaultInfo().getMessage());
+            } catch (Exception exc) {
+                System.out.println("Unknown error");
+                exc.printStackTrace();
             }
+
         }
     }
 
