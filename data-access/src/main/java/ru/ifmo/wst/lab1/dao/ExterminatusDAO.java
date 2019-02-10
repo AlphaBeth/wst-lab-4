@@ -104,6 +104,17 @@ public class ExterminatusDAO {
         }
     }
 
+    public int delete(long id) throws SQLException {
+        log.debug("Delete entity with id {}", id);
+        try (Connection connection = dataSource.getConnection()) {
+            connection.setAutoCommit(true);
+            try (PreparedStatement ps = connection.prepareStatement("DELETE FROM exterminatus WHERE id = ?")) {
+                ps.setLong(1, id);
+                return ps.executeUpdate();
+            }
+        }
+    }
+
     private List<ExterminatusEntity> rsToEntities(ResultSet rs) throws SQLException {
         List<ExterminatusEntity> result = new ArrayList<>();
         while (rs.next()) {
