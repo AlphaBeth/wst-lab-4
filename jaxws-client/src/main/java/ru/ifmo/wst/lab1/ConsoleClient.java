@@ -13,6 +13,7 @@ import ru.ifmo.wst.lab1.ws.client.ExterminatusEntity;
 import ru.ifmo.wst.lab1.ws.client.ExterminatusService;
 import ru.ifmo.wst.lab1.ws.client.ExterminatusServiceService;
 import ru.ifmo.wst.lab1.ws.client.Filter;
+import ru.ifmo.wst.lab1.ws.client.Update;
 
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -69,6 +70,17 @@ public class ConsoleClient {
                         toNull(new StringArg<>("planet", "Exterminated planet", Create::setPlanet)),
                         toNull(new DateArg<>("date", "Date of exterminatus", (filter, date) -> filter.setDate(fromDate(date))))
                 ), Create::new);
+        Command<Update> updateCommand = new Command<>("update",
+                "Update exterminatus by id",
+                asList(
+                        new LongArg<>("id", "Exterminatus id", Update::setId),
+                        toNull(new StringArg<>("initiator", "Initiator name", Update::setInitiator)),
+                        toNull(new StringArg<>("reason", "Reason of exterminatus", Update::setReason)),
+                        toNull(new StringArg<>("method", "Method of exterminatus", Update::setMethod)),
+                        toNull(new StringArg<>("planet", "Exterminated planet", Update::setPlanet)),
+                        toNull(new DateArg<>("date", "Date of exterminatus", (filter, date) -> filter.setDate(fromDate(date))))
+                ), Update::new
+        );
         Command<Void> exitCommand = new Command<>("exit", "Exit application");
 
         Command<Box<Long>> deleteCommand = new Command<>("delete", "Delete exterminatus by id",
@@ -80,7 +92,7 @@ public class ConsoleClient {
                 System.out::print,
                 asList(
                         infoCommand, changeEndpointAddressCommand, createCommand, findAllCommand, filterCommand,
-                        deleteCommand, exitCommand
+                        updateCommand, deleteCommand, exitCommand
                 ),
                 "No command found",
                 "Enter command", "> ");
@@ -122,6 +134,11 @@ public class ConsoleClient {
                 Box<Long> argRight = (Box<Long>) withArg.getRight();
                 int deletedCount = service.delete(argRight.getValue());
                 System.out.printf("%d were deleted by id %d\n", deletedCount, argRight.getValue());
+            } else if (command.equals(updateCommand)) {
+                Update updateArg = (Update) withArg.getRight();
+                int updateCount = service.update(updateArg.getId(), updateArg.getInitiator(), updateArg.getReason(), updateArg.getMethod(),
+                        updateArg.getPlanet(), updateArg.getDate());
+                System.out.printf("%d rows were updated by id %d\n", updateCount, updateArg.getId());
             }
         }
     }
