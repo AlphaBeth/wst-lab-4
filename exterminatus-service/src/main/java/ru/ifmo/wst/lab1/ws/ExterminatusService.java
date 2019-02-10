@@ -30,6 +30,14 @@ public class ExterminatusService {
         return exterminatusDAO.filter(id, initiator, reason, method, planet, date);
     }
 
+    @WebMethod
+    @SneakyThrows
+    public long create(@WebParam(name = "initiator") String initiator,
+                       @WebParam(name = "reason") String reason, @WebParam(name = "method") String method,
+                       @WebParam(name = "planet") String planet, @WebParam(name = "date") Date date) {
+        return exterminatusDAO.create(initiator, reason, method, planet, date);
+    }
+
     public ExterminatusService(ExterminatusDAO exterminatusDAO) {
         this.exterminatusDAO = exterminatusDAO;
     }
