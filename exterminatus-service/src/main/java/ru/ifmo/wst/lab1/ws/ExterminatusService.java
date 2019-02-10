@@ -38,6 +38,12 @@ public class ExterminatusService {
         return exterminatusDAO.create(initiator, reason, method, planet, date);
     }
 
+    @WebMethod
+    @SneakyThrows
+    public int delete(@WebParam(name = "id") long id) {
+        return exterminatusDAO.delete(id);
+    }
+
     public ExterminatusService(ExterminatusDAO exterminatusDAO) {
         this.exterminatusDAO = exterminatusDAO;
     }
