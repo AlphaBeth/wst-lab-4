@@ -20,7 +20,6 @@
         <module>standalone-jaxws</module>
         <module>jaxws-client</module>
         <module>data-access</module>
-        <module>deployment-jaxws</module>
         <module>exterminatus-service</module>
     </modules>
 

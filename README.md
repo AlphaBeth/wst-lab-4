@@ -37,6 +37,5 @@ The project consists of some modules:
 
 - data-access -- all database-related code (entity classes, data access objects, utilities for query generation)
 - exterminatus-service -- implementation of JAX-WS service
-- deployment-jaxws -- packaging and configuration of exterminatus service for deployment onto application server
 - standalone-jaxws -- standalone version of exterminatus service
 - jaxws-client -- console client for web service
