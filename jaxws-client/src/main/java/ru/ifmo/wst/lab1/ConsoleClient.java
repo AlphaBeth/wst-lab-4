@@ -8,6 +8,7 @@ import ru.ifmo.wst.lab1.command.args.EmptyStringToNull;
 import ru.ifmo.wst.lab1.command.args.LongArg;
 import ru.ifmo.wst.lab1.command.args.StringArg;
 import ru.ifmo.wst.lab1.command.CommandInterpreter;
+import ru.ifmo.wst.lab1.ws.client.Create;
 import ru.ifmo.wst.lab1.ws.client.ExterminatusEntity;
 import ru.ifmo.wst.lab1.ws.client.ExterminatusService;
 import ru.ifmo.wst.lab1.ws.client.ExterminatusServiceService;
@@ -59,10 +60,19 @@ public class ConsoleClient {
                         toNull(new DateArg<>("date", "Date of exterminatus", (filter, date) -> filter.setDate(fromDate(date))))
                 ),
                 Filter::new);
+        Command<Create> createCommand = new Command<>("create",
+                "Create new exterminatus entity",
+                asList(
+                        toNull(new StringArg<>("initiator", "Initiator name", Create::setInitiator)),
+                        toNull(new StringArg<>("reason", "Reason of exterminatus", Create::setReason)),
+                        toNull(new StringArg<>("method", "Method of exterminatus", Create::setMethod)),
+                        toNull(new StringArg<>("planet", "Exterminated planet", Create::setPlanet)),
+                        toNull(new DateArg<>("date", "Date of exterminatus", (filter, date) -> filter.setDate(fromDate(date))))
+                ), Create::new);
         Command<Void> exitCommand = new Command<>("exit", "Exit application");
 
         CommandInterpreter commandInterpreter = new CommandInterpreter(() -> readLine(bufferedReader),
-                System.out::print, asList(infoCommand, changeEndpointAddressCommand, findAllCommand, filterCommand, exitCommand),
+                System.out::print, asList(infoCommand, changeEndpointAddressCommand, createCommand, findAllCommand, filterCommand, exitCommand),
                 "No command found",
                 "Enter command", "> ");
 
@@ -93,6 +103,11 @@ public class ConsoleClient {
                 Box<String> arg = (Box<String>) withArg.getRight();
                 String newUrl = arg.getValue();
                 bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, newUrl);
+            } else if (command.equals(createCommand)) {
+                Create createArg = (Create) withArg.getRight();
+                long createdId = service.create(createArg.getInitiator(), createArg.getReason(), createArg.getMethod(), createArg.getPlanet(),
+                        createArg.getDate());
+                System.out.printf("Entity with id %d was created", createdId);
             }
         }
     }
