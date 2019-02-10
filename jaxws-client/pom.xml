@@ -47,7 +47,7 @@
             <groupId>ru.ifmo.wst</groupId>
             <artifactId>exterminatus-service</artifactId>
             <classifier>client</classifier>
-            <version>4.0</version>
+            <version>3.0</version>
         </dependency>
     </dependencies>
 
