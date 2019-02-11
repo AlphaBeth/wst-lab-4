@@ -2,6 +2,7 @@ package ru.ifmo.wst.lab1.rs;
 
 import lombok.SneakyThrows;
 import ru.ifmo.wst.lab.ExterminatusPaths;
+import ru.ifmo.wst.lab.ParamNames;
 import ru.ifmo.wst.lab1.dao.ExterminatusDAO;
 import ru.ifmo.wst.lab1.model.ExterminatusEntity;
 
@@ -37,9 +38,9 @@ public class ExterminatusResource {
     @GET
     @Path(ExterminatusPaths.FILTER_PATH)
     @SneakyThrows
-    public List<ExterminatusEntity> filter(@QueryParam("id") Long id, @QueryParam("initiator") String initiator,
-                                           @QueryParam("reason") String reason, @QueryParam("method") String method,
-                                           @QueryParam("planet") String planet, @QueryParam("date") Date date) {
+    public List<ExterminatusEntity> filter(@QueryParam(ParamNames.ID) Long id, @QueryParam(ParamNames.INTIATOR) String initiator,
+                                           @QueryParam(ParamNames.REASON) String reason, @QueryParam(ParamNames.METHOD) String method,
+                                           @QueryParam(ParamNames.PLANET) String planet, @QueryParam(ParamNames.PLANET) Date date) {
         return exterminatusDAO.filter(id, initiator, reason, method, planet, date);
     }
 }

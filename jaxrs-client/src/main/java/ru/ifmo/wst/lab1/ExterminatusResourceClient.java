@@ -5,6 +5,7 @@ import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
 import lombok.Getter;
 import ru.ifmo.wst.lab.ExterminatusPaths;
+import ru.ifmo.wst.lab.ParamNames;
 import ru.ifmo.wst.lab1.model.ExterminatusEntity;
 import ru.ifmo.wst.lab1.model.Filter;
 
@@ -34,12 +35,12 @@ public class ExterminatusResourceClient {
 
     public List<ExterminatusEntity> filter(Filter filter) {
         WebResource resource = filterResource;
-        resource = setParamIfNotNull(resource, "id", filter.getId());
-        resource = setParamIfNotNull(resource, "initiator", filter.getInitiator());
-        resource = setParamIfNotNull(resource, "method", filter.getMethod());
-        resource = setParamIfNotNull(resource, "planet", filter.getPlanet());
-        resource = setParamIfNotNull(resource, "reason", filter.getReason());
-        resource = setParamIfNotNull(resource, "date", filter.getDate());
+        resource = setParamIfNotNull(resource, ParamNames.ID, filter.getId());
+        resource = setParamIfNotNull(resource, ParamNames.INTIATOR, filter.getInitiator());
+        resource = setParamIfNotNull(resource, ParamNames.METHOD, filter.getMethod());
+        resource = setParamIfNotNull(resource, ParamNames.PLANET, filter.getPlanet());
+        resource = setParamIfNotNull(resource, ParamNames.REASON, filter.getReason());
+        resource = setParamIfNotNull(resource, ParamNames.DATE, filter.getDate());
         return resource.accept(MediaType.APPLICATION_JSON_TYPE).get(EXTERMINATUS_LIST);
     }
 
