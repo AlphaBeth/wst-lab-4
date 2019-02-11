@@ -40,7 +40,7 @@ public class ExterminatusResource {
     @SneakyThrows
     public List<ExterminatusEntity> filter(@QueryParam(ParamNames.ID) Long id, @QueryParam(ParamNames.INTIATOR) String initiator,
                                            @QueryParam(ParamNames.REASON) String reason, @QueryParam(ParamNames.METHOD) String method,
-                                           @QueryParam(ParamNames.PLANET) String planet, @QueryParam(ParamNames.PLANET) Date date) {
+                                           @QueryParam(ParamNames.PLANET) String planet, @QueryParam(ParamNames.DATE) Date date) {
         return exterminatusDAO.filter(id, initiator, reason, method, planet, date);
     }
 }
