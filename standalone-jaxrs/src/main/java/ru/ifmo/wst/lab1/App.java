@@ -25,10 +25,6 @@ public class App {
         String port = conf.get("port", "8080");
         String baseUrl = scheme + "//" + host + ":" + port;
 
-        String exterminatusServiceName = conf.get("exterminatus.service.name");
-
-        String exterminatusUrl = baseUrl + "/" + exterminatusServiceName;
-
         DataSource dataSource = initDataSource();
         ExterminatusResource.GLOBAL_DAO = new ExterminatusDAO(dataSource);
         ClassNamesResourceConfig resourceConfig = new ClassNamesResourceConfig(ExterminatusResource.class);

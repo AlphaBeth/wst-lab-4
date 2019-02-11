@@ -19,7 +19,7 @@
 
     <modules>
         <module>standalone-jaxrs</module>
-        <module>jaxws-client</module>
+        <module>jaxrs-client</module>
         <module>data-access</module>
         <module>exterminatus-service</module>
     </modules>
