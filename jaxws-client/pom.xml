@@ -45,9 +45,16 @@
         </dependency>
         <dependency>
             <groupId>ru.ifmo.wst</groupId>
-            <artifactId>exterminatus-service</artifactId>
-            <classifier>client</classifier>
-            <version>3.0</version>
+            <artifactId>data-access</artifactId>
+            <version>4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-json</artifactId>
         </dependency>
     </dependencies>
 

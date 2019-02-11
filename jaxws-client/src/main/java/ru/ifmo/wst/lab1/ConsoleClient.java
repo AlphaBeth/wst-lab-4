@@ -9,21 +9,11 @@ import ru.ifmo.wst.lab1.command.args.DateArg;
 import ru.ifmo.wst.lab1.command.args.EmptyStringToNull;
 import ru.ifmo.wst.lab1.command.args.LongArg;
 import ru.ifmo.wst.lab1.command.args.StringArg;
-import ru.ifmo.wst.lab1.ws.client.Create;
-import ru.ifmo.wst.lab1.ws.client.ExterminatusEntity;
-import ru.ifmo.wst.lab1.ws.client.ExterminatusService;
-import ru.ifmo.wst.lab1.ws.client.ExterminatusServiceException;
-import ru.ifmo.wst.lab1.ws.client.ExterminatusServiceService;
-import ru.ifmo.wst.lab1.ws.client.Filter;
-import ru.ifmo.wst.lab1.ws.client.Update;
+import ru.ifmo.wst.lab1.model.ExterminatusEntity;
+import ru.ifmo.wst.lab1.model.Filter;
 
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.ws.BindingProvider;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -31,13 +21,9 @@ import static java.util.Arrays.asList;
 public class ConsoleClient {
     @SneakyThrows
     public static void main(String[] args) {
-        ExterminatusServiceService exterminatusService = new ExterminatusServiceService();
-        ExterminatusService service = exterminatusService.getExterminatusServicePort();
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-        BindingProvider bindingProvider = (BindingProvider) service;
-        String endpointUrl;
-        endpointUrl = "http://localhost:8080/deployment-jaxws-1.0/ExterminatusServiceService";
-        System.out.print("Enter endpoint url (or empty string for default " + endpointUrl + ")\n> ");
+        String endpointUrl = "http://localhost:8080/exterminatus";
+        System.out.print("Enter base exterminatus url (or empty string for default " + endpointUrl + ")\n> ");
         String line = bufferedReader.readLine();
         if (line == null) {
             return;
@@ -45,8 +31,8 @@ public class ConsoleClient {
         if (!line.trim().isEmpty()) {
             endpointUrl = line.trim();
         }
-        bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointUrl);
 
+        ExterminatusResourceClient service = new ExterminatusResourceClient(endpointUrl);
 
         Command<Void> infoCommand = new Command<>("info", "Print help for commands");
         Command<Box<String>> changeEndpointAddressCommand = new Command<>("endpoint", "Changes endpoint address",
@@ -63,41 +49,17 @@ public class ConsoleClient {
                         toNull(new StringArg<>("reason", "Reason of exterminatus", Filter::setReason)),
                         toNull(new StringArg<>("method", "Method of exterminatus", Filter::setMethod)),
                         toNull(new StringArg<>("planet", "Exterminated planet", Filter::setPlanet)),
-                        toNull(new DateArg<>("date", "Date of exterminatus", (filter, date) -> filter.setDate(fromDate(date))))
+                        toNull(new DateArg<>("date", "Date of exterminatus", Filter::setDate))
                 ),
                 Filter::new);
-        Command<Create> createCommand = new Command<>("create",
-                "Create new exterminatus entity",
-                asList(
-                        toNull(new StringArg<>("initiator", "Initiator name", Create::setInitiator)),
-                        toNull(new StringArg<>("reason", "Reason of exterminatus", Create::setReason)),
-                        toNull(new StringArg<>("method", "Method of exterminatus", Create::setMethod)),
-                        toNull(new StringArg<>("planet", "Exterminated planet", Create::setPlanet)),
-                        toNull(new DateArg<>("date", "Date of exterminatus", (filter, date) -> filter.setDate(fromDate(date))))
-                ), Create::new);
-        Command<Update> updateCommand = new Command<>("update",
-                "Update exterminatus by id",
-                asList(
-                        new LongArg<>("id", "Exterminatus id", Update::setId),
-                        toNull(new StringArg<>("initiator", "Initiator name", Update::setInitiator)),
-                        toNull(new StringArg<>("reason", "Reason of exterminatus", Update::setReason)),
-                        toNull(new StringArg<>("method", "Method of exterminatus", Update::setMethod)),
-                        toNull(new StringArg<>("planet", "Exterminated planet", Update::setPlanet)),
-                        toNull(new DateArg<>("date", "Date of exterminatus", (filter, date) -> filter.setDate(fromDate(date))))
-                ), Update::new
-        );
         Command<Void> exitCommand = new Command<>("exit", "Exit application");
 
-        Command<Box<Long>> deleteCommand = new Command<>("delete", "Delete exterminatus by id",
-                asList(
-                        new LongArg<>("id", "Exterminatus id", Box::setValue)
-                ), Box::new);
 
         CommandInterpreter commandInterpreter = new CommandInterpreter(() -> readLine(bufferedReader),
                 System.out::print,
                 asList(
-                        infoCommand, changeEndpointAddressCommand, createCommand, findAllCommand, filterCommand,
-                        updateCommand, deleteCommand, exitCommand
+                        infoCommand, changeEndpointAddressCommand, findAllCommand, filterCommand,
+                        exitCommand
                 ),
                 "No command found",
                 "Enter command", "> ");
@@ -119,13 +81,12 @@ public class ConsoleClient {
                 if (command.equals(findAllCommand)) {
                     List<ExterminatusEntity> all = service.findAll();
                     System.out.println("Result of operation:");
-                    all.forEach(ee -> System.out.println(exterminatusToString(ee)));
+                    all.forEach(System.out::println);
                 } else if (command.equals(filterCommand)) {
                     Filter filterArg = (Filter) withArg.getRight();
-                    List<ExterminatusEntity> filterRes = service.filter(filterArg.getId(), filterArg.getInitiator(), filterArg.getReason(), filterArg.getMethod(),
-                            filterArg.getPlanet(), filterArg.getDate());
+                    List<ExterminatusEntity> filterRes = service.filter(filterArg);
                     System.out.println("Result of operation:");
-                    filterRes.forEach(ee -> System.out.println(exterminatusToString(ee)));
+                    filterRes.forEach(System.out::println);
                 } else if (command.equals(infoCommand)) {
                     commandInterpreter.info();
                 } else if (command.equals(exitCommand)) {
@@ -134,26 +95,8 @@ public class ConsoleClient {
                     @SuppressWarnings("unchecked")
                     Box<String> arg = (Box<String>) withArg.getRight();
                     String newUrl = arg.getValue();
-                    bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, newUrl);
-                } else if (command.equals(createCommand)) {
-                    Create createArg = (Create) withArg.getRight();
-                    long createdId = service.create(createArg.getInitiator(), createArg.getReason(), createArg.getMethod(), createArg.getPlanet(),
-                            createArg.getDate());
-                    System.out.printf("Entity with id %d was created\n", createdId);
-                } else if (command.equals(deleteCommand)) {
-                    @SuppressWarnings("unchecked")
-                    Box<Long> argRight = (Box<Long>) withArg.getRight();
-                    int deletedCount = service.delete(argRight.getValue());
-                    System.out.printf("%d were deleted by id %d\n", deletedCount, argRight.getValue());
-                } else if (command.equals(updateCommand)) {
-                    Update updateArg = (Update) withArg.getRight();
-                    int updateCount = service.update(updateArg.getId(), updateArg.getInitiator(), updateArg.getReason(), updateArg.getMethod(),
-                            updateArg.getPlanet(), updateArg.getDate());
-                    System.out.printf("%d rows were updated by id %d\n", updateCount, updateArg.getId());
+                    service = new ExterminatusResourceClient(newUrl);
                 }
-            } catch (ExterminatusServiceException exc) {
-                System.out.println("Error in service:");
-                System.out.println(exc.getFaultInfo().getMessage());
             } catch (Exception exc) {
                 System.out.println("Unknown error");
                 exc.printStackTrace();
@@ -171,26 +114,4 @@ public class ConsoleClient {
         return reader.readLine();
     }
 
-    @SneakyThrows
-    private static XMLGregorianCalendar fromDate(Date date) {
-        if (date == null) {
-            return null;
-        }
-        GregorianCalendar gregorianCalendar = new GregorianCalendar();
-        gregorianCalendar.setTime(date);
-        return DatatypeFactory.newInstance().newXMLGregorianCalendar(
-                gregorianCalendar);
-    }
-
-    private static String exterminatusToString(ExterminatusEntity ee) {
-        return "ExterminatusEntity{" +
-                "date=" + ee.getDate() +
-                ", id=" + ee.getId() +
-                ", initiator='" + ee.getInitiator() + '\'' +
-                ", method='" + ee.getMethod() + '\'' +
-                ", planet='" + ee.getPlanet() + '\'' +
-                ", reason='" + ee.getReason() + '\'' +
-                '}';
-
-    }
 }
