@@ -25,8 +25,8 @@ public class ExterminatusResourceClient {
 
     public ExterminatusResourceClient(String baseUrl) {
         this.baseUrl = baseUrl + ExterminatusPaths.ROOT_PATH;
-        this.findAllResource = Client.create().resource(url(ExterminatusPaths.FILTER_PATH));
-        this.filterResource = Client.create().resource(url(ExterminatusPaths.FIND_ALL_PATH));
+        this.findAllResource = Client.create().resource(url(ExterminatusPaths.FIND_ALL_PATH));
+        this.filterResource = Client.create().resource(url(ExterminatusPaths.FILTER_PATH));
     }
 
     public List<ExterminatusEntity> findAll() {
