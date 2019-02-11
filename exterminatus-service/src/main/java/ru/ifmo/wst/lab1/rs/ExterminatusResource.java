@@ -1,6 +1,7 @@
 package ru.ifmo.wst.lab1.rs;
 
 import lombok.SneakyThrows;
+import ru.ifmo.wst.lab.ExterminatusPaths;
 import ru.ifmo.wst.lab1.dao.ExterminatusDAO;
 import ru.ifmo.wst.lab1.model.ExterminatusEntity;
 
@@ -13,7 +14,7 @@ import javax.ws.rs.core.MediaType;
 import java.util.Date;
 import java.util.List;
 
-@Path("/exterminatus")
+@Path(ExterminatusPaths.ROOT_PATH)
 @Produces({MediaType.APPLICATION_JSON})
 public class ExterminatusResource {
 
@@ -27,14 +28,14 @@ public class ExterminatusResource {
     }
 
     @GET
-    @Path("/all")
+    @Path(ExterminatusPaths.FIND_ALL_PATH)
     @SneakyThrows
     public List<ExterminatusEntity> findAll() {
         return exterminatusDAO.findAll();
     }
 
     @GET
-    @Path("/filter")
+    @Path(ExterminatusPaths.FILTER_PATH)
     @SneakyThrows
     public List<ExterminatusEntity> filter(@QueryParam("id") Long id, @QueryParam("initiator") String initiator,
                                            @QueryParam("reason") String reason, @QueryParam("method") String method,

@@ -2,6 +2,7 @@ package ru.ifmo.wst.lab1;
 
 import lombok.SneakyThrows;
 import ru.ifmo.wst.lab.Box;
+import ru.ifmo.wst.lab.ExterminatusPaths;
 import ru.ifmo.wst.lab.Pair;
 import ru.ifmo.wst.lab1.command.Command;
 import ru.ifmo.wst.lab1.command.CommandArg;
@@ -24,7 +25,7 @@ public class ConsoleClient {
     @SneakyThrows
     public static void main(String[] args) {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-        String endpointUrl = "http://localhost:8080/exterminatus";
+        String endpointUrl = "http://localhost:8080";
         System.out.print("Enter base exterminatus url (or empty string for default " + endpointUrl + ")\n> ");
         String line = bufferedReader.readLine();
         if (line == null) {

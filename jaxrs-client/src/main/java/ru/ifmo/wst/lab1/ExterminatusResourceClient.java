@@ -4,6 +4,7 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
 import lombok.Getter;
+import ru.ifmo.wst.lab.ExterminatusPaths;
 import ru.ifmo.wst.lab1.model.ExterminatusEntity;
 import ru.ifmo.wst.lab1.model.Filter;
 
@@ -22,9 +23,9 @@ public class ExterminatusResourceClient {
 
 
     public ExterminatusResourceClient(String baseUrl) {
-        this.baseUrl = baseUrl;
-        this.findAllResource = Client.create().resource(url("/all"));
-        this.filterResource = Client.create().resource(url("/filter"));
+        this.baseUrl = baseUrl + ExterminatusPaths.ROOT_PATH;
+        this.findAllResource = Client.create().resource(url(ExterminatusPaths.FILTER_PATH));
+        this.filterResource = Client.create().resource(url(ExterminatusPaths.FIND_ALL_PATH));
     }
 
     public List<ExterminatusEntity> findAll() {
