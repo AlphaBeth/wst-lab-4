@@ -1,7 +1,7 @@
 package ru.ifmo.wst.lab1.command;
 
 import lombok.RequiredArgsConstructor;
-import ru.ifmo.wst.lab1.Pair;
+import ru.ifmo.wst.lab.Pair;
 
 import java.util.List;
 import java.util.function.Consumer;

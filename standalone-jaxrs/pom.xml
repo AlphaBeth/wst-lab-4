@@ -77,6 +77,11 @@
             <artifactId>exterminatus-service</artifactId>
             <version>4.0</version>
         </dependency>
+        <dependency>
+            <groupId>ru.ifmo.wst</groupId>
+            <artifactId>utils</artifactId>
+            <version>4.0</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
         <dependency>
             <groupId>org.postgresql</groupId>

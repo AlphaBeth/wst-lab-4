@@ -1,4 +1,4 @@
-package ru.ifmo.wst.lab1;
+package ru.ifmo.wst.lab;
 
 import lombok.Data;
 

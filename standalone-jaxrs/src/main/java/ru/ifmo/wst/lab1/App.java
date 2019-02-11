@@ -7,9 +7,9 @@ import com.zaxxer.hikari.HikariDataSource;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.glassfish.grizzly.http.server.HttpServer;
+import ru.ifmo.wst.lab.Configuration;
 import ru.ifmo.wst.lab1.dao.ExterminatusDAO;
 import ru.ifmo.wst.lab1.rs.ExterminatusResource;
-import ru.ifmo.wst.lab1.util.Configuration;
 
 import javax.sql.DataSource;
 import java.io.InputStream;

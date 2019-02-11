@@ -1,6 +1,8 @@
 package ru.ifmo.wst.lab1;
 
 import lombok.SneakyThrows;
+import ru.ifmo.wst.lab.Box;
+import ru.ifmo.wst.lab.Pair;
 import ru.ifmo.wst.lab1.command.Command;
 import ru.ifmo.wst.lab1.command.CommandArg;
 import ru.ifmo.wst.lab1.command.CommandInterpreter;
