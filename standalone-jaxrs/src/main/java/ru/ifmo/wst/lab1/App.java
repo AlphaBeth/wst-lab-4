@@ -31,6 +31,7 @@ public class App {
         log.info("Start server on {}", baseUrl);
         HttpServer server = GrizzlyServerFactory.createHttpServer(baseUrl, resourceConfig);
         server.start();
+        Runtime.getRuntime().addShutdownHook(new Thread(server::stop));
         log.info("Application was successfully started");
         System.in.read();
     }
