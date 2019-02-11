@@ -28,6 +28,7 @@ public class App {
         DataSource dataSource = initDataSource();
         ExterminatusResource.GLOBAL_DAO = new ExterminatusDAO(dataSource);
         ClassNamesResourceConfig resourceConfig = new ClassNamesResourceConfig(ExterminatusResource.class);
+        log.info("Start server on {}", baseUrl);
         HttpServer server = GrizzlyServerFactory.createHttpServer(baseUrl, resourceConfig);
         server.start();
         log.info("Application was successfully started");
